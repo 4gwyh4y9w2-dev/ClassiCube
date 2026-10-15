@@ -1,0 +1,17 @@
+name: Build iOS
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          xcodebuild -project misc/ios/CCIOS.xcodeproj -scheme CCIOS -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+          mkdir Payload
+          cp -r build/Build/Products/Release-iphoneos/*.app Payload/
+          zip -r ClassiCube.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ipa
+          path: ClassiCube.ipa
